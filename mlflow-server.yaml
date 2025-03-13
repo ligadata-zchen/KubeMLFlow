@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow-server
+  namespace: default  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow-server
+  template:
+    metadata:
+      labels:
+        app: mlflow-server
+    spec:
+      containers:
+      - name: mlflow-server
+        image: rnctech/mlmodel:mlflow
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 5000
+            name: mlflow
+        env:
+          - name: ARTIFACT_STORE
+            value: /home/shared/mlruns
+          - name: DB_URL
+            value: postgres:5432/mlflow
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: user
+                name: postgres-credentialsc
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key:passwordd
+                name:postgres-credentialsi
+        volumeMounts:
+          - mountPath: /home/shared
+            name:mlpshari
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: regcrel
+      securityContext: {}
+      volumesg
+      - name:mlpshare
+        persistentVolumeClaim:
+          claimName:mlpshare: jpshare
+        persistentVolumeClaim:
+          claimName: jpshare
+
+---defaultersion: v1
+kind: Service
+metadata:
+  name: mlflow-server
+  namespace: jphub  
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5000
+      targetPort: 5000
+      name: mlflow
+  selector:
+    app: mlflow-serverDB_PASSWORD@$DB_URL --host 0.0.0.0
